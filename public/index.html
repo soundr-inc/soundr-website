@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soundr | Original music. New possibilities.</title>
+<meta name="description" content="A new life for original music. Soundr brings artists, labels and remixers together around the next version. Invite-first.">
+<meta name="robots" content="noindex, nofollow">
+<!-- Change to netlify only in an explicitly approved deployment. -->
+<meta name="soundr-intake-mode" content="preview">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='100' height='100' fill='%23000000'/%3E%3Cellipse cx='50' cy='53' rx='40' ry='10.5' fill='none' stroke='%23D93A1F' stroke-width='3.6' transform='rotate(-18 50 53)'/%3E%3Ccircle cx='50' cy='50' r='20' fill='%23D93A1F'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAIAAAD8GO2jAAAABmJLR0QA/wD/AP+gvaeTAAACHElEQVRIie1UTWjTUBz/p0lek6Zmabe1aE1ji8isBz1Mj14FLyIKHjx48GgZiI4hQ/Q+ETzuIO7gVT0KOhVvu4iKQhVXMNW67qPN2qz5Tp6HStONNp0wPeV3eu//9ft/vQcQIkSIfw5i93YFDuVjNACUNbvUtvAeEpwZjU1LCZGhuhLZcO7Jyou6tgcEU6JwTRzpq3qytvVpy8oy1BhNogiBMdQs562iLzWNbn3k0Nzv5JODtAUOZRDVdL0Vy62ajuJ4KUQWRcHG8EE1OzbUIGcAIABuSongDBAJs8v13nn8OOic5KOPfv25RgKcC3GUZYIyAACJoY9yqHs9sS96NcM/W2t3JQMJcix9NzcaHL2DPEt3DpfS8YVj6fmfzZcNf/h9EkwjsigK51Pcx5a5GwIMcGqEuZEVRIa6/nX9jaL3andu0cV0fPZQcqlp3K8oiCCeHt8/lOC9ak7E0MJK62G1pbreDq1fAQFwK5c4Nx6f/rax2NA6EtlwpMAxYIxLbav4ZX3Ddvsa+Gt6IRW/coC//Hn1nep3ZtVyz45xAQQzy/X5akvzBr5rn2BKFJ7X268a2zpY1m2agEme6ev8oLL5uKYG0ENvi14r2u1ccpJnZMO2PEjSEYmhJYYaR6TuYQDMRvyV+67bc/LmYuMvv4ojMfp0gs1EKZIgVMeTDbtiOBXDqZkOBpjg0GGWxgBl3S61raGhQ4QI8d/wG1QIwvGwNiIYAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" href="data:image/png;base64,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">
+<link rel="preload" href="/assets/fonts/space-grotesk-400.ttf" as="font" type="font/ttf" crossorigin>
+<link rel="preload" href="/assets/fonts/space-grotesk-700.ttf" as="font" type="font/ttf" crossorigin>
+<style>
+  @font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/space-grotesk-400.ttf") format("truetype"); }
+  @font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 500; font-display: swap; src: url("/assets/fonts/space-grotesk-500.ttf") format("truetype"); }
+  @font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 600; font-display: swap; src: url("/assets/fonts/space-grotesk-600.ttf") format("truetype"); }
+  @font-face { font-family: "Space Grotesk"; font-style: normal; font-weight: 700; font-display: swap; src: url("/assets/fonts/space-grotesk-700.ttf") format("truetype"); }
+  @font-face { font-family: "JetBrains Mono"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/jetbrains-mono-400.ttf") format("truetype"); }
+  :root {
+    --bg: #000000;
+    --ink: #f2ede4;
+    --ink-dim: rgba(242, 237, 228, 0.6);
+    --ink-faint: rgba(242, 237, 228, 0.65);
+    --coral: #ff5b3a;
+    --coral-soft: rgba(255, 91, 58, 0.14);
+    --coral-line: rgba(255, 91, 58, 0.45);
+    --line: rgba(242, 237, 228, 0.12);
+    --line-soft: rgba(242, 237, 228, 0.07);
+    --sans: "Space Grotesk", system-ui, -apple-system, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--coral); color: #000; }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- Background ---------- */
+  .bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .brand-block .glow {
+    position: absolute;
+    top: 70%; left: 50%;
+    z-index: -1; pointer-events: none;
+    transform: translate(-50%, -58%);
+    width: min(900px, 150vw); height: 640px;
+    background: radial-gradient(ellipse, rgba(255, 91, 58, 0.20) 0%, transparent 65%);
+    animation: glow-drift 24s ease-in-out infinite alternate;
+  }
+  @keyframes glow-drift {
+    from { transform: translate(-54%, -58%) scale(0.96); }
+    to { transform: translate(-46%, -53%) scale(1.06); }
+  }
+  .bg svg {
+    position: absolute;
+    inset: 0;
+    width: 100%; height: 100%;
+    opacity: 0.5;
+  }
+  .bg-node { animation: breathe 7s ease-in-out infinite; }
+  .bg-node.b2 { animation-delay: 1.4s; }
+  .bg-node.b3 { animation-delay: 2.8s; }
+  .bg-node.b4 { animation-delay: 4.2s; }
+  .bg-node.b5 { animation-delay: 5.6s; }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 0.7; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .bg-node { animation: none; opacity: 0.4; }
+    .brand-block .glow { animation: none; }
+    html { scroll-behavior: auto; }
+  }
+
+  /* ---------- Shell ---------- */
+  .shell {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 28px 32px;
+  }
+  .top a.quiet {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    transition: color 0.15s ease;
+  }
+  .top a.quiet:hover { color: var(--ink); }
+
+  /* ---------- Center ---------- */
+  .center {
+    overflow-x: clip;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 40px;
+    padding: 24px 24px 56px;
+  }
+  .brand-block { position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+  .message-block { display: flex; flex-direction: column; align-items: center; }
+  .action-block { width: 100%; max-width: 516px; padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: rgba(255, 255, 255, 0.035); }
+  .tagline-period { color: var(--coral); }
+  .mobile-break { display: none; }
+  .mark {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 0;
+  }
+  .mark svg { width: 100%; height: 100%; display: block; }
+  .wordmark-hero {
+    font-weight: 700;
+    font-size: clamp(4rem, 15vw, 10rem);
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+  }
+  .tagline-hero {
+    margin-top: 0;
+    font-size: clamp(1.3rem, 2.8vw, 1.8rem);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    line-height: 1.35;
+    color: var(--ink);
+    max-width: 24em;
+  }
+  .tagline-sub {
+    margin-top: 10px;
+    font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+    line-height: 1.65;
+    color: var(--ink-dim);
+    max-width: 34em;
+  }
+  .access-form {
+    margin-top: 0;
+    width: 100%;
+    max-width: 460px;
+  }
+  .access-form fieldset { border: 0; min-width: 0; }
+  .access-form legend { width: 100%; color: var(--ink-dim); font-size: 14px; margin-bottom: 14px; }
+  .audiences { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .audience { cursor: pointer; min-height: 52px; padding: 12px; border: 1px solid var(--line); border-radius: 8px; font: inherit; font-size: 15px; color: var(--ink); background: transparent; }
+  .audience:hover, .audience[aria-pressed="true"] { border-color: var(--coral); background: rgba(255, 91, 58, 0.22); color: #ffb29f; }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--coral); outline-offset: 4px; }
+  .waitlist-link { display: inline-block; margin-top: 18px; font-size: 13px; color: var(--ink-dim); text-decoration: underline; text-decoration-color: var(--coral); text-underline-offset: 5px; text-decoration-thickness: 1px; padding: 8px 0; }
+  .back { border: 0; padding: 8px 0; background: transparent; color: var(--ink-dim); font: inherit; font-size: 13px; cursor: pointer; text-decoration: underline; }
+  .contact-fields h2 { font-size: 17px; font-weight: 500; margin-bottom: 12px; }
+  .contact-fields .form-error { color: var(--coral); margin-top: 16px; }
+  .submission-status { font-size: 13px; color: var(--ink-dim); }
+  .contact-fields { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); text-align: left; }
+  .contact-fields p { font-size: 14px; color: var(--ink-dim); margin-bottom: 18px; }
+  .contact-fields label { display: block; font-size: 13px; margin: 14px 0 6px; }
+  .contact-fields input { display: block; width: 100%; }
+  .contact-fields .btn { margin-top: 20px; width: 100%; }
+  .preview-note { margin-top: 14px; font-size: 12px; color: var(--ink-dim); }
+  .success p { margin-bottom: 18px; }
+  .success .btn { background: transparent; border-color: var(--line); color: var(--ink); }
+  [hidden] { display: none !important; }
+  .access-form input:not([type="radio"]) {
+    flex: 1;
+    min-width: 0;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+  .access-form input::placeholder { color: var(--ink-faint); }
+  .access-form input:focus { border-color: var(--coral); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    padding: 14px 18px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: var(--coral);
+    color: #000;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { background: #ff6f52; transform: translateY(-1px); }
+  .note {
+    margin-top: 14px;
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: var(--ink-faint);
+  }
+  .success {
+    display: none;
+    margin-top: 0;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--coral);
+    letter-spacing: 0.04em;
+  }
+  .center.done .access-form { display: none; }
+  .center.done .success { display: block; }
+  .btn[disabled] { opacity: 0.6; cursor: default; transform: none; }
+
+  .foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    padding: 24px 32px;
+    border-top: 1px solid var(--line-soft);
+  }
+  .foot, .foot a {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    color: var(--ink-faint);
+  }
+  .foot a:hover { color: var(--ink); }
+  .foot .links { display: flex; gap: 24px; }
+
+  /* ---------- Support ---------- */
+  .support {
+    position: relative;
+    z-index: 1;
+    padding: 40px 24px;
+    border-top: 1px solid var(--line-soft);
+    background: rgba(255, 255, 255, 0.02);
+    display: flex;
+    justify-content: center;
+  }
+  .support-card {
+    width: 100%;
+    max-width: 640px;
+    background: rgba(10, 10, 10, 0.9);
+    border: 1px solid var(--line-soft);
+    border-radius: 16px;
+    padding: 40px 36px;
+    text-align: center;
+  }
+  .support-card .kicker {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+  }
+  .support-card h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin-bottom: 14px;
+  }
+  .support-card p {
+    color: var(--ink-dim);
+    font-size: 0.98rem;
+    max-width: 34em;
+    margin: 0 auto;
+  }
+  .support-card p + p { margin-top: 12px; }
+  .support-email {
+    display: inline-block;
+    margin-top: 26px;
+    font-family: var(--sans);
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    color: var(--ink);
+    background: #000;
+    border: 1px solid var(--coral-line);
+    border-radius: 8px;
+    padding: 14px 24px;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .support-email:hover { background: var(--coral); color: #000; border-color: var(--coral); }
+  /* Keep paragraph defaults from collapsing the email-to-divider gap. */
+  .support-card .company-line { margin-top: 32px; }
+  .company-line {
+    padding-top: 24px;
+    border-top: 1px solid var(--line-soft);
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--ink-faint);
+    max-width: 28em;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (max-width: 640px) {
+    .top { padding: 22px 20px; }
+    .center { gap: 32px; padding: 16px 20px 40px; }
+    .action-block { padding: 22px 18px; }
+    .mobile-break { display: block; }
+    .tagline-sub { max-width: 25em; line-height: 1.55; }
+    .tagline-hero { max-width: 15em; }
+    .note { font-size: 11px; }
+    .support { padding: 28px 20px; }
+    .support-card { padding: 32px 20px; }
+
+    .foot { justify-content: center; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg" aria-hidden="true">
+  <svg viewBox="0 0 1440 900" xmlns="http://www.w3.org/2000/svg" fill="none" preserveAspectRatio="xMidYMid slice">
+    <path d="M180 140 C 240 300, 200 420, 130 560" stroke="rgba(255,91,58,0.10)" stroke-width="1"/>
+    <path d="M180 140 C 320 220, 420 260, 520 240" stroke="rgba(242,237,228,0.06)" stroke-width="1"/>
+    <path d="M1260 180 C 1200 340, 1240 480, 1330 600" stroke="rgba(255,91,58,0.10)" stroke-width="1"/>
+    <path d="M1260 180 C 1140 260, 1080 320, 1050 420" stroke="rgba(242,237,228,0.06)" stroke-width="1"/>
+    <path d="M130 560 C 220 660, 320 720, 460 750" stroke="rgba(242,237,228,0.05)" stroke-width="1"/>
+    <path d="M1330 600 C 1240 700, 1120 760, 980 780" stroke="rgba(242,237,228,0.05)" stroke-width="1"/>
+    <circle class="bg-node" cx="180" cy="140" r="4" fill="#ff5b3a" opacity="0.4"/>
+    <circle class="bg-node b2" cx="1260" cy="180" r="4" fill="#ff5b3a" opacity="0.4"/>
+    <circle class="bg-node b3" cx="130" cy="560" r="3" stroke="#ff5b3a" stroke-width="1" opacity="0.35"/>
+    <circle class="bg-node b4" cx="1330" cy="600" r="3" stroke="#ff5b3a" stroke-width="1" opacity="0.35"/>
+    <circle class="bg-node b5" cx="520" cy="240" r="2.5" fill="rgba(242,237,228,0.3)"/>
+    <circle class="bg-node b3" cx="1050" cy="420" r="2.5" fill="rgba(242,237,228,0.3)"/>
+    <circle class="bg-node b2" cx="460" cy="750" r="2.5" fill="rgba(242,237,228,0.25)"/>
+    <circle class="bg-node b4" cx="980" cy="780" r="2.5" fill="rgba(242,237,228,0.25)"/>
+  </svg>
+</div>
+
+<div class="shell" id="top">
+  <div class="top">
+    <a class="quiet" href="#support">Support</a>
+  </div>
+
+  <main class="center" id="centerCard">
+    <div class="brand-block">
+    <div class="glow" aria-hidden="true"></div>
+    <div class="mark" aria-hidden="true">
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="50" cy="53" rx="40" ry="10.5" fill="none" stroke="#ff5b3a" stroke-width="3.6" transform="rotate(-18 50 53)"/>
+        <circle cx="50" cy="50" r="20" fill="#ff5b3a"/>
+      </svg>
+    </div>
+    <h1 class="wordmark-hero">soundr</h1>
+    </div>
+    <div class="message-block">
+    <p class="tagline-hero">A new life for original music<span class="tagline-period">.</span></p>
+    <p class="tagline-sub">Remixes with the artist in the loop,<br class="mobile-break"> from stem to release.</p>
+    <p class="note">Invite only · Built in NYC, USA</p>
+    </div>
+    <div class="action-block">
+    <form class="access-form" id="accessForm" name="soundr-interest" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" aria-describedby="previewNote">
+      <input type="hidden" name="form-name" value="soundr-interest">
+      <input type="hidden" name="audience" id="audiencePath" value="">
+      <input type="hidden" name="path" id="intakePath" value="">
+      <p hidden><label>Leave this empty: <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <fieldset id="interestFields" disabled>
+        <legend>Request an invite: </legend>
+        <div class="audiences">
+          <button type="button" class="audience" data-path="artist-label" aria-pressed="false" aria-controls="contactFields">Artists &amp; labels</button>
+          <button type="button" class="audience" data-path="remixer" aria-pressed="false" aria-controls="contactFields">Remixers</button>
+        </div>
+        <a href="#contactFields" class="waitlist-link" id="waitlistLink" aria-controls="contactFields" hidden>DJ? Join the waitlist.</a>
+        <div class="contact-fields" id="contactFields" hidden>
+          <button type="button" class="back" id="backToChoices">Back to choices</button>
+          <p id="audienceDescription" aria-live="polite"></p>
+          <h2>Tell us who you are.</h2>
+          <label for="accessEmail">Email address</label>
+          <input type="email" id="accessEmail" name="email" placeholder="you@example.com" autocomplete="email" required disabled>
+          <label for="accessName">Name (optional)</label>
+          <input type="text" id="accessName" name="name" autocomplete="name" maxlength="200" disabled>
+          <label for="artistName">Artist name (or label name) (optional)</label>
+          <input type="text" id="artistName" name="artist-name" maxlength="200" disabled>
+          <button type="submit" class="btn" id="accessSubmit">Request an invite.</button>
+          <p class="form-error" id="formError" role="alert" tabindex="-1" hidden></p>
+        </div>
+      </fieldset>
+      <p class="submission-status" id="submissionStatus" role="status"></p>
+      <p class="preview-note" id="previewNote">Design preview. Nothing is sent or saved.</p>
+    </form>
+    <noscript><p class="preview-note">This intake needs JavaScript. The form is disabled and nothing is sent. Support is available below.</p></noscript>
+    <div class="success" id="confirmation" tabindex="-1" role="status">
+      <p id="confirmationMessage"></p>
+      <p class="preview-note" id="confirmationPreview" hidden>Design preview. Nothing was sent or saved.</p>
+      <button type="button" class="btn" id="startAgain">Back to the page</button>
+    </div>
+    </div>
+  </main>
+</div>
+
+<section class="support" id="support">
+  <div class="support-card">
+    <div class="kicker">Support</div>
+    <h2>Need a hand?</h2>
+    <p>Question about a purchase, your account, or Soundr? Get in touch.</p>
+    <a class="support-email" href="mailto:support@soundr.app">support@soundr.app</a>
+    <p class="company-line">Soundr, Inc. &middot; New York City</p>
+  </div>
+</section>
+
+  <footer class="foot">
+    <span>&copy; 2026 Soundr, Inc.</span>
+    <div class="links">
+      <a href="#support">Support</a>
+      <a href="mailto:support@soundr.app">Contact</a>
+    </div>
+  </footer>
+
+<script>
+  // Fail closed: preview is the shipped default, including when served on Netlify.
+  // An approved deployment must explicitly change the mode AND use the allowed HTTPS host.
+  (function () {
+    var form = document.getElementById("accessForm");
+    var card = document.getElementById("centerCard");
+    var fields = document.getElementById("contactFields");
+    var description = document.getElementById("audienceDescription");
+    var confirmation = document.getElementById("confirmation");
+    var choices = form.querySelectorAll('[data-path]');
+    var waitlist = document.getElementById("waitlistLink");
+    var fieldset = document.getElementById("interestFields");
+    var email = document.getElementById("accessEmail");
+    var submit = document.getElementById("accessSubmit");
+    var error = document.getElementById("formError");
+    var status = document.getElementById("submissionStatus");
+    var selected = "";
+    var trigger = choices[0];
+    var pending = false;
+    var live = document.querySelector('meta[name="soundr-intake-mode"]').content === "netlify"
+      && location.protocol === "https:"
+      && ["soundr.app", "www.soundr.app"].includes(location.hostname);
+    if (live) document.getElementById("previewNote").textContent = "";
+    var descriptions = {
+      "artist-label": "Your track, your terms. Invited remixers make versions, you hear them all, and you stay in control of what goes out.",
+      "remixer": "Remix tracks the artist actually wants remixed. Real stems, a real listen, and a path to release if they pick yours.",
+      "producer-dj-waitlist": "Join the DJ waitlist."
+    };
+    function showFields(show) {
+      fields.hidden = !show;
+      fields.querySelectorAll("input").forEach(function (input) { input.disabled = !show; });
+    }
+    function reset() {
+      form.reset();
+      selected = "";
+      document.getElementById("audiencePath").value = "";
+      document.getElementById("intakePath").value = "";
+      choices.forEach(function (choice) { choice.setAttribute("aria-pressed", "false"); });
+      error.hidden = true;
+      status.textContent = "";
+      showFields(false);
+      card.classList.remove("done");
+    }
+    function select(path, source) {
+      if (pending) return;
+      reset();
+      selected = path;
+      trigger = source;
+      document.getElementById("audiencePath").value = path;
+      document.getElementById("intakePath").value = path;
+      choices.forEach(function (choice) { choice.setAttribute("aria-pressed", String(choice.dataset.path === path)); });
+      description.textContent = descriptions[path];
+      submit.textContent = path === "producer-dj-waitlist" ? "Join the waitlist." : "Request an invite.";
+      showFields(true);
+      email.focus();
+    }
+    choices.forEach(function (choice) {
+      choice.addEventListener("click", function () {
+        select(choice.dataset.path, choice);
+      });
+    });
+    waitlist.addEventListener("click", function (e) {
+      e.preventDefault();
+      select("producer-dj-waitlist", waitlist);
+    });
+    document.getElementById("backToChoices").addEventListener("click", function () {
+      reset();
+      trigger.focus();
+    });
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      if (pending || !selected || !form.reportValidity()) return;
+      error.hidden = true;
+      if (!live) {
+        document.getElementById("confirmationMessage").textContent = "Got it. Thanks for reaching out.";
+        document.getElementById("confirmationPreview").hidden = false;
+        card.classList.add("done");
+        confirmation.focus();
+        return;
+      }
+      // Capture before disabling controls, otherwise FormData omits their values.
+      var body = new URLSearchParams(new FormData(form)).toString();
+      pending = true;
+      fieldset.disabled = true;
+      waitlist.setAttribute("aria-disabled", "true");
+      form.setAttribute("aria-busy", "true");
+      status.textContent = "Sending…";
+      var controller = new AbortController();
+      var timeout = setTimeout(function () { controller.abort(); }, 15000);
+      try {
+        var response = await fetch("/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: body,
+          signal: controller.signal
+        });
+        if (!response.ok || response.redirected) throw new Error("Submission not confirmed");
+        document.getElementById("confirmationMessage").textContent = "Got it. Thanks for reaching out.";
+        card.classList.add("done");
+        confirmation.focus();
+      } catch (_) {
+        error.textContent = "We couldn’t confirm your submission. Your details are still here. Please try again, or email support@soundr.app. Retrying may send a duplicate if the first request arrived.";
+        error.hidden = false;
+        error.focus();
+      } finally {
+        clearTimeout(timeout);
+        pending = false;
+        fieldset.disabled = false;
+        waitlist.removeAttribute("aria-disabled");
+        form.removeAttribute("aria-busy");
+        status.textContent = "";
+      }
+    });
+    document.getElementById("startAgain").addEventListener("click", function () {
+      reset();
+      trigger.focus();
+    });
+    // Fail closed when scripts are unavailable; enable only after handlers exist.
+    fieldset.disabled = false;
+    waitlist.hidden = false;
+  })();
+
+  // soundr.app/support is printed on Stripe receipts. It is served by a rewrite
+  // (see _redirects), so land the visitor on the support section immediately.
+  (function () {
+    var path = window.location.pathname.replace(/\/+$/, "").toLowerCase();
+    if (path !== "/support") { return; }
+    var target = document.getElementById("support");
+    if (!target) { return; }
+    var root = document.documentElement;
+    var previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    target.scrollIntoView();
+    root.style.scrollBehavior = previous;
+  })();
+</script>
+
+</body>
+</html>
