@@ -326,6 +326,11 @@
     margin-right: auto;
   }
 
+  /* Keep deliberate touch entry readable without sub-16px input focus zoom. */
+  @media (max-width: 640px), (pointer: coarse) {
+    .access-form input:not([type="radio"]) { font-size: 16px; }
+  }
+
   @media (max-width: 640px) {
     .top { padding: 22px 20px; }
     .center { gap: 32px; padding: 16px 20px 40px; }
@@ -398,7 +403,7 @@
         <a href="#contactFields" class="waitlist-link" id="waitlistLink" aria-controls="contactFields" hidden>DJ? Join the waitlist.</a>
         <div class="contact-fields" id="contactFields" hidden>
           <button type="button" class="back" id="backToChoices">Back to choices</button>
-          <p id="audienceDescription" aria-live="polite"></p>
+          <p id="audienceDescription" aria-live="polite" tabindex="-1"></p>
           <h2>Tell us who you are.</h2>
           <label for="accessEmail">Email address</label>
           <input type="email" id="accessEmail" name="email" placeholder="you@example.com" autocomplete="email" required disabled>
@@ -495,7 +500,13 @@
       description.textContent = descriptions[path];
       submit.textContent = path === "producer-dj-waitlist" ? "Join the waitlist." : "Request an invite.";
       showFields(true);
-      email.focus();
+      if (window.matchMedia("(max-width: 640px), (pointer: coarse)").matches) {
+        // Reveal the introduction without summoning a touch keyboard.
+        description.focus({ preventScroll: true });
+        fields.scrollIntoView({ block: "start", behavior: "instant" });
+      } else {
+        email.focus();
+      }
     }
     choices.forEach(function (choice) {
       choice.addEventListener("click", function () {
