@@ -29,3 +29,9 @@ Use a branch and pull request. Once Netlify is connected, updates merged to `mai
 ## Local preview
 
 Run `python3 -m http.server 8080 --directory public --bind 127.0.0.1` and open http://127.0.0.1:8080/. Font files and their licenses are included under `public/assets/fonts/`.
+
+## Focused form checks
+
+With an existing Playwright installation and its Chromium/WebKit browsers available, run `node tests/mobile-entry.cjs` and `node tests/intake.cjs`. Set `PLAYWRIGHT_MODULE` to the module path if it is not installed locally. Repeat with `BROWSER=webkit`. These checks intercept all network traffic, including mocked form submissions. Optional `EVIDENCE_DIR` captures form screenshots.
+
+Phone-width and coarse-pointer entry focuses the audience introduction, not an input. Text inputs use 16px on those surfaces; desktop retains 14px inputs and email focus. Zoom remains enabled. Headless checks cover focus, reading order, scroll reachability and reduced-height layouts, not the native iPhone keyboard, autofill toolbar or actual Safari focus zoom. Those require an on-device recheck.
