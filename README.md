@@ -16,9 +16,9 @@ Connect this repository to the existing soundr.app site, not a new site.
 
 ## Form activation
 
-The site currently ships in **preview mode**. Connecting the repository does not enable submissions. Preview confirms the interaction but explicitly states that nothing was sent or saved.
+The launch configuration uses Netlify Forms on HTTPS soundr.app and www.soundr.app. Other hosts, including localhost and deploy previews, stay in preview mode and do not send submissions.
 
-A separately approved launch change must set the `soundr-intake-mode` meta value in `public/index.html` from `preview` to `netlify`. Sending is allowed only on HTTPS soundr.app or www.soundr.app; other hosts remain previews.
+The `soundr-intake-mode` meta value in `public/index.html` is `netlify`. Set it to `preview` to disable browser submissions in a subsequent deployment.
 
 Before declaring intake live, verify that Netlify detects the `soundr-interest` form and retains actual authorized test submissions for each path: `artist-label`, `remixer`, and `producer-dj-waitlist` (the visible DJ waitlist). Check email, optional name, optional artist/label name, and hidden audience/path values. Check the spam folder as well as accepted submissions. A browser success message alone does not establish receipt. Monday lead forwarding is not connected by this repository.
 
