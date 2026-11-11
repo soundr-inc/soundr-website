@@ -53,6 +53,10 @@ if (process.env.EVIDENCE_DIR) fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive
           if (touch && sizes.some(([, size]) => size < 16)) findings.add('Touch text fields use 15px rather than >=16px; real iPhone focus zoom remains unverified.');
           assert.equal(await page.locator('#firstName').evaluate(e => e.required), true);
           assert.equal(await page.locator('#lastName').evaluate(e => e.required), true);
+          // Let the supplied 60ms entry-focus callback settle before testing Tab order.
+          // Otherwise its legitimate late focus can race a synthetic immediate Tab.
+          await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 100)));
+          if (width > 720) assert.equal(await page.evaluate(() => document.activeElement.id), 'accessEmail');
           await page.locator('#accessEmail').focus();
           assert.equal(await page.evaluate(() => document.activeElement.id), 'accessEmail');
           await page.keyboard.press(tab);
