@@ -142,6 +142,12 @@
     .foot { justify-content: center; text-align: center; }
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .bg .glow, .bg-node, .sheet-in, .card { animation: none; } .btn, .door { transition: none; } }
+  @media (max-width: 720px), (any-pointer: coarse) { .field input { font-size: 16px; } .field.hero input { font-size: 17px; } }
+  @media (max-width: 360px) {
+    .seg { grid-template-columns: 1fr 1fr 1.3fr .65fr; }
+    .field label { white-space: normal; overflow: visible; }
+    .field label span { display: inline-block; }
+  }
 </style>
 <div class="bg" aria-hidden="true">
   <div class="glow"></div>
@@ -259,7 +265,7 @@
   var email = document.getElementById("accessEmail");
   var openers = document.querySelectorAll(".card [data-path]");
   var tabs = document.querySelectorAll(".tab");
-  var selected = "", pending = false, opener = null;
+  var selected = "", pending = false, opener = null, generation = 0, requestId = 0;
   var live = document.querySelector('meta[name="soundr-intake-mode"]').content === "netlify"
     && location.protocol === "https:"
     && ["soundr.app", "www.soundr.app"].indexOf(location.hostname) >= 0;
@@ -287,14 +293,16 @@
     form.hidden = false; done.hidden = true;
   }
   function openSheet(path, source) {
-    opener = source || null; pending = false; form.reset(); setPath(path);
+    var openedGeneration = ++generation;
+    opener = source || null; pending = false; submit.disabled = false; form.reset(); setPath(path);
     if (typeof sheet.showModal === "function") { if (!sheet.open) sheet.showModal(); } else { sheet.setAttribute("open", ""); }
     document.body.style.overflow = "hidden";
-    setTimeout(function () { if (!window.matchMedia("(max-width: 720px)").matches) email.focus({ preventScroll: true }); }, 60);
+    setTimeout(function () { if (sheet.open && generation === openedGeneration && !window.matchMedia("(max-width: 720px)").matches) email.focus({ preventScroll: true }); }, 60);
   }
   function closeSheet() {
+    generation++;
     if (sheet.open) sheet.close(); else sheet.removeAttribute("open");
-    document.body.style.overflow = ""; pending = false; form.reset(); selected = "";
+    document.body.style.overflow = ""; pending = false; submit.disabled = false; form.reset(); selected = "";
     if (opener) opener.focus();
   }
   openers.forEach(function (b) { b.addEventListener("click", function () { openSheet(b.dataset.path, b); }); });
@@ -313,8 +321,12 @@
     if (!ln.value.trim()) { setNote("Add your last name too.", true); ln.focus(); return; }
     var lab = document.getElementById("labelName");
     if (selected === "label" && !lab.value.trim()) { setNote("Add your label's name.", true); lab.focus(); return; }
+    var requestGeneration = generation, requestPath = selected, id = ++requestId;
+    // A late response still may have been received by Netlify, but cannot update another session.
+    var isCurrent = function () { return sheet.open && generation === requestGeneration && requestId === id && selected === requestPath; };
     var finish = function () {
-      document.getElementById("confirmationSub").textContent = COPY[selected].doneSub;
+      if (!isCurrent()) return;
+      document.getElementById("confirmationSub").textContent = COPY[requestPath].doneSub;
       form.hidden = true; done.hidden = false; done.focus();
     };
     if (!live) { finish(); return; }
@@ -325,8 +337,8 @@
     var timeout = setTimeout(function () { controller.abort(); }, 15000);
     fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: body, signal: controller.signal })
       .then(function (r) { if (!r.ok) throw new Error("not ok"); finish(); })
-      .catch(function () { setNote("Something went wrong on our end. Email support@soundr.app and we'll sort it.", true); })
-      .then(function () { clearTimeout(timeout); pending = false; submit.disabled = false; });
+      .catch(function () { if (isCurrent()) setNote("Something went wrong on our end. Email support@soundr.app and we'll sort it.", true); })
+      .then(function () { clearTimeout(timeout); if (isCurrent()) { pending = false; submit.disabled = false; } });
   });
 
   // soundr.app/support is printed on Stripe receipts and served by a rewrite (see _redirects): land on the support section.

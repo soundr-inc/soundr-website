@@ -15,6 +15,11 @@ assert.equal(fs.readFileSync(path.join(root, '_redirects'), 'utf8'), '/support /
   try {
     const context = await browser.newContext({ viewport: { width: 390, height: 500 }, hasTouch: true, reducedMotion: 'reduce' });
     const page = await context.newPage();
+    await page.addInitScript(() => {
+      const original = window.fetch;
+      window.finishedRequests = 0;
+      window.fetch = (...args) => original(...args).finally(() => { window.finishedRequests++; });
+    });
     const errors = [], payloads = [];
     page.on('pageerror', e => errors.push(e.message));
     let html = source, outcome = 'success', release;
@@ -23,7 +28,9 @@ assert.equal(fs.readFileSync(path.join(root, '_redirects'), 'utf8'), '/support /
       if (req.method() === 'POST') {
         assert(['https://soundr.app/', 'https://www.soundr.app/'].includes(req.url()));
         payloads.push(Object.fromEntries(new URLSearchParams(req.postData())));
-        const result = outcome;
+        const current = outcome;
+        const result = typeof current === 'object' ? current.result : current;
+        if (typeof current === 'object') await new Promise(resolve => { current.release = resolve; });
         if (result === 'pending') await new Promise(resolve => { release = resolve; });
         if (result === 'network') return route.abort('failed');
         if (result === 'timeout') return; // Exercise the actual 15-second abort deadline.
@@ -122,21 +129,43 @@ assert.equal(fs.readFileSync(path.join(root, '_redirects'), 'utf8'), '/support /
     await page.locator('#accessSubmit').click();
     await page.locator('#confirmation').waitFor(); await settled();
     console.log('PASS label-to-artist hidden-field validity and successful payload');
-    // Delayed completion must not acknowledge a newly opened, unsubmitted door.
-    await page.goto('https://soundr.app/'); await choose('artist'); await fill();
-    outcome = 'pending'; release = null;
-    await page.locator('#accessSubmit').click();
-    await page.waitForFunction(() => document.querySelector('#accessSubmit').disabled);
-    await page.locator('#closeSheet').click(); await choose('producer-dj-waitlist');
-    assert.equal(typeof release, 'function'); release(); await settled();
-    const stale = await page.locator('#confirmation').isVisible();
-    if (stale) {
-      findings.push('Delayed artist POST acknowledges the newly opened, unsubmitted DJ door as success.');
-      if (process.env.EVIDENCE_DIR) {
-        fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive: true });
-        await page.screenshot({ path: path.join(process.env.EVIDENCE_DIR, `${process.env.BROWSER || 'chromium'}-stale-success.png`) });
+    // Observe old completion, including its cleanup, before checking the new session.
+    for (const result of ['success', 'error', 'network', 'timeout']) {
+      for (const next of ['closed', 'artist', 'producer-dj-waitlist', 'new-pending']) {
+        await page.goto('https://soundr.app/'); await choose('artist'); await fill();
+        const old = { result };
+        outcome = old; release = null;
+        // Hold failures too, so they complete only after close/reopen.
+        await page.locator('#accessSubmit').click();
+        await page.waitForFunction(() => document.querySelector('#accessSubmit').disabled);
+        assert.equal(typeof old.release, 'function');
+        await page.locator('#closeSheet').click();
+        if (next !== 'closed') await choose(next === 'artist' ? 'artist' : 'producer-dj-waitlist');
+        if (next === 'new-pending') {
+          // Keep the new request's real 15s deadline well after the old timeout.
+          if (result === 'timeout') await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 14000)));
+          await fill(); outcome = 'pending'; release = null;
+          await page.locator('#accessSubmit').click();
+          await page.waitForFunction(() => document.querySelector('#accessSubmit').disabled);
+          assert.equal(typeof release, 'function');
+        }
+        old.release();
+        await page.waitForFunction(() => window.finishedRequests >= 1, null, { timeout: 20000 });
+        await page.evaluate(() => new Promise(resolve => setTimeout(resolve, 0)));
+        assert.equal(await page.locator('#confirmation').isVisible(), false, `${result}/${next}: no stale success`);
+        assert.equal(await page.locator('#formNote').evaluate(e => e.classList.contains('err')), false, `${result}/${next}: no stale error`);
+        assert.equal(await page.locator('#accessSubmit').isDisabled(), next === 'new-pending', `${result}/${next}: isolated cleanup`);
+        if (next === 'new-pending') {
+          assert.match(await page.locator('#formNote').innerText(), /Sending/);
+          await page.locator('.tab[data-path="artist"]').click();
+          assert.equal(await page.locator('#intakePath').inputValue(), 'producer-dj-waitlist');
+          release(); await page.locator('#confirmation').waitFor(); await settled();
+          assert.equal(await page.locator('#confirmationSub').innerText(), "You're on the DJ waitlist.");
+          assert.equal(payloads.at(-1).path, 'producer-dj-waitlist');
+        }
       }
     }
+    console.log('PASS stale success/error/network/timeout after close, same/different reopen and newer pending request; isolated confirmation/error/cleanup');
     assert.deepEqual(errors, []);
     await context.close();
     const noJs = await browser.newContext({ javaScriptEnabled: false });

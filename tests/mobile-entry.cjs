@@ -51,6 +51,8 @@ if (process.env.EVIDENCE_DIR) fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive
           assert.equal(await page.evaluate(() => document.body.style.overflow), 'hidden');
           const sizes = await page.locator('#accessForm input:visible').evaluateAll(es => es.map(e => [e.name, parseFloat(getComputedStyle(e).fontSize)]));
           if (touch && sizes.some(([, size]) => size < 16)) findings.add('Touch text fields use 15px rather than >=16px; real iPhone focus zoom remains unverified.');
+          const clipped = await page.locator('.tab, .field label:visible').evaluateAll(es => es.filter(e => e.scrollWidth > e.clientWidth || e.scrollHeight > e.clientHeight).map(e => e.textContent));
+          if (clipped.length) findings.add(`${width}x${height}: clipped tabs/labels: ${clipped.join(', ')}`);
           assert.equal(await page.locator('#firstName').evaluate(e => e.required), true);
           assert.equal(await page.locator('#lastName').evaluate(e => e.required), true);
           // Let the supplied 60ms entry-focus callback settle before testing Tab order.
@@ -94,6 +96,7 @@ if (process.env.EVIDENCE_DIR) fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive
           assert.equal(await page.evaluate(() => document.body.style.overflow), '');
           assert.equal(await page.locator('#accessEmail').inputValue(), '');
           await choice(page, audience).click(); await page.keyboard.press('Escape');
+          await page.locator('#sheet').waitFor({ state: 'hidden' });
           assert.equal(await page.locator('#sheet').isVisible(), false);
           assert.equal(await page.evaluate(() => document.body.style.overflow), '');
           assert.equal(await choice(page, audience).evaluate(e => document.activeElement === e), true);
