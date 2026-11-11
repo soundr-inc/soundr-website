@@ -7,12 +7,14 @@ const path = require('node:path');
 const root = path.join(__dirname, '..', 'public');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const engine = process.env.BROWSER === 'webkit' ? webkit : chromium;
-const paths = ['artist-label', 'remixer', 'producer-dj-waitlist'];
-const choice = (page, audience) => page.locator(audience === paths[2] ? '#waitlistLink' : `[data-path="${audience}"]`);
+const paths = ['artist', 'label', 'remixer', 'producer-dj-waitlist'];
+const choice = (page, audience) => page.locator(`.card [data-path="${audience}"]`);
+if (process.env.EVIDENCE_DIR) fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive: true });
 (async () => {
   const browser = await engine.launch();
+  const findings = new Set();
   try {
-    for (const [width, height, touch] of [[320, 480, true], [390, 500, true], [440, 540, true], [844, 390, true], [640, 900, false], [641, 900, false], [768, 1024, true], [1440, 900, false]]) {
+    for (const [width, height, touch] of [[320, 480, true], [390, 844, true], [390, 500, true], [440, 540, true], [844, 390, true], [1440, 900, false]]) {
       for (const reducedMotion of ['reduce', 'no-preference']) {
         const context = await browser.newContext({ viewport: { width, height }, hasTouch: touch, reducedMotion });
         const page = await context.newPage();
@@ -26,51 +28,83 @@ const choice = (page, audience) => page.locator(audience === paths[2] ? '#waitli
           return req.isNavigationRequest() ? route.fulfill({ contentType: 'text/html', body: html }) : route.abort();
         });
         await page.goto('http://soundr.test/');
-        await page.evaluate(() => document.fonts.ready);
-        const mobile = width <= 640 || touch;
+        await page.evaluate(async () => {
+          await Promise.all([document.fonts.load('400 17px "Space Grotesk"'), document.fonts.load('400 11px "JetBrains Mono"')]);
+          await document.fonts.ready;
+        });
+        assert(await page.evaluate(() => document.fonts.check('400 17px "Space Grotesk"') && document.fonts.check('400 11px "JetBrains Mono"')));
         const tab = process.env.BROWSER === 'webkit' ? 'Alt+Tab' : 'Tab';
+        if (process.env.EVIDENCE_DIR && reducedMotion === 'reduce' && [390, 1440].includes(width)) {
+          fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive: true });
+          await page.screenshot({ path: path.join(process.env.EVIDENCE_DIR, `${process.env.BROWSER || 'chromium'}-${width}x${height}-landing.png`), fullPage: true });
+        }
         for (const audience of paths) {
           await choice(page, audience).click();
-          assert.equal(await page.evaluate(() => document.activeElement.id), mobile ? 'audienceDescription' : 'accessEmail', `${width} touch=${touch}: entry focus`);
-          if (mobile) {
-            assert(await page.locator('#audienceDescription').evaluate(e => { const r = e.getBoundingClientRect(); return r.top >= 0 && r.bottom < innerHeight; }), 'Introduction visible');
-            assert(await page.locator('#contactFields h2').evaluate(e => { const r = e.getBoundingClientRect(); return r.top >= 0 && r.bottom < innerHeight; }), 'Heading visible');
-            await page.keyboard.press(tab);
-            assert.equal(await page.evaluate(() => document.activeElement.id), 'accessEmail');
+          await page.waitForFunction(() => document.querySelector('#sheet').open);
+          // The source's desktop focus timer runs after 60ms. Observe actual native entry first.
+          const entry = await page.evaluate(() => ({ tag: document.activeElement.tagName, id: document.activeElement.id, className: document.activeElement.className }));
+          assert(await page.evaluate(() => document.querySelector('#sheet').contains(document.activeElement)));
+          console.log(`OBSERVE ${width}x${height} ${audience} native initial focus=${JSON.stringify(entry)}`);
+          if (process.env.EVIDENCE_DIR && reducedMotion === 'reduce') {
+            await page.screenshot({ path: path.join(process.env.EVIDENCE_DIR, `${process.env.BROWSER || 'chromium'}-${width}x${height}-${audience}-entry.png`) });
           }
-          assert.deepEqual(await page.locator('#contactFields input').evaluateAll(es => es.map(e => [e.name, e.required, parseFloat(getComputedStyle(e).fontSize)])), [['email', true, mobile ? 16 : 14], ['name', false, mobile ? 16 : 14], ['artist-name', false, mobile ? 16 : 14]]);
+          assert.equal(await page.evaluate(() => document.body.style.overflow), 'hidden');
+          const sizes = await page.locator('#accessForm input:visible').evaluateAll(es => es.map(e => [e.name, parseFloat(getComputedStyle(e).fontSize)]));
+          if (touch && sizes.some(([, size]) => size < 16)) findings.add('Touch text fields use 15px rather than >=16px; real iPhone focus zoom remains unverified.');
+          assert.equal(await page.locator('#firstName').evaluate(e => e.required), true);
+          assert.equal(await page.locator('#lastName').evaluate(e => e.required), true);
           await page.locator('#accessEmail').focus();
           assert.equal(await page.evaluate(() => document.activeElement.id), 'accessEmail');
           await page.keyboard.press(tab);
-          assert.equal(await page.evaluate(() => document.activeElement.id), 'accessName');
+          assert.equal(await page.evaluate(() => document.activeElement.id), 'firstName');
           await page.keyboard.press(tab);
-          assert.equal(await page.evaluate(() => document.activeElement.id), 'artistName');
-          await page.keyboard.press(tab);
-          assert.equal(await page.evaluate(() => document.activeElement.id), 'accessSubmit');
+          assert.equal(await page.evaluate(() => document.activeElement.id), 'lastName');
+          for (let i = 0; i < 14; i++) {
+            await page.keyboard.press(tab);
+            assert(await page.evaluate(() => document.activeElement === document.body || document.querySelector('#sheet').contains(document.activeElement)), 'Native focus trap');
+          }
+          for (const control of ['#accessEmail', '#firstName', '#lastName', ...(audience === 'label' ? ['#labelName'] : []), '#accessSubmit']) {
+            await page.locator(control).scrollIntoViewIfNeeded();
+            assert(await page.locator(control).evaluate(e => {
+              const r = e.getBoundingClientRect(), s = e.closest('.sheet-in').getBoundingClientRect();
+              return r.top >= Math.max(0, s.top) && r.bottom <= Math.min(innerHeight, s.bottom) && e === document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2);
+            }), `${width}x${height}: ${control} reachable/hit-test`);
+          }
           await page.locator('#accessSubmit').scrollIntoViewIfNeeded();
-          await page.waitForFunction(() => { const e = document.querySelector('#accessSubmit'); const r = e.getBoundingClientRect(); return r.top >= 0 && r.bottom <= innerHeight && e === document.elementFromPoint(r.x + r.width / 2, r.y + r.height / 2); });
           assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), 'No horizontal overflow');
-          if (process.env.EVIDENCE_DIR && audience === paths[0] && reducedMotion === 'reduce' && [390, 1440].includes(width)) {
+          if (process.env.EVIDENCE_DIR && reducedMotion === 'reduce') {
             fs.mkdirSync(process.env.EVIDENCE_DIR, { recursive: true });
-            const shot = suffix => page.screenshot({ path: path.join(process.env.EVIDENCE_DIR, `${process.env.BROWSER || 'chromium'}-${width}-${suffix}.png`) });
-            await shot('lower');
-            await page.locator('#accessEmail').focus();
-            await shot('focused');
-            await choice(page, audience).click();
-            await shot('entry');
+            await page.screenshot({ path: path.join(process.env.EVIDENCE_DIR, `${process.env.BROWSER || 'chromium'}-${width}x${height}-${audience}.png`) });
+          }
+          for (const next of paths) {
+            await page.locator(`.tab[data-path="${next}"]`).click();
+            assert.equal(await page.locator('#intakePath').inputValue(), next);
+            assert.equal(await page.locator('#audiencePath').inputValue(), next);
+            assert.equal(await page.locator('#labelRow').isVisible(), next === 'label');
+            assert.equal(await page.locator('#artistField').isVisible(), next !== 'label');
           }
           await page.locator('#accessEmail').fill('reset@example.com');
-          await page.locator('#backToChoices').click();
+          await page.locator('#closeSheet').click();
           assert.equal(await choice(page, audience).evaluate(e => document.activeElement === e), true);
-          assert.equal(await page.locator('#contactFields').isVisible(), false);
+          assert.equal(await page.locator('#sheet').isVisible(), false);
+          assert.equal(await page.evaluate(() => document.body.style.overflow), '');
           assert.equal(await page.locator('#accessEmail').inputValue(), '');
-          assert.equal(await page.locator('#intakePath').inputValue(), '');
+          await choice(page, audience).click(); await page.keyboard.press('Escape');
+          assert.equal(await page.locator('#sheet').isVisible(), false);
+          assert.equal(await page.evaluate(() => document.body.style.overflow), '');
+          assert.equal(await choice(page, audience).evaluate(e => document.activeElement === e), true);
+          await choice(page, audience).click(); await page.mouse.click(2, 2);
+          assert.equal(await page.locator('#sheet').isVisible(), false);
+          assert.equal(await page.evaluate(() => document.body.style.overflow), '');
+          assert.equal(await choice(page, audience).evaluate(e => document.activeElement === e), true);
         }
         assert.deepEqual(errors, []);
         assert.deepEqual(posts, []);
         await context.close();
-        console.log(`PASS ${width}x${height} touch=${touch} motion=${reducedMotion}: all paths, intro/focus, fonts, tab order, scroll/hit-test, reset`);
+        console.log(`PASS ${width}x${height} touch=${touch} motion=${reducedMotion}: four openers, all tab transitions, native modal/focus trap, fonts, controls reachable, no overflow, X/Escape/outside close and return focus/scroll cleanup`);
       }
     }
+    findings.forEach(f => console.error(`FAIL contract: ${f}`));
+    if (findings.size) process.exitCode = 1;
   } finally { await browser.close(); }
 })().catch(e => { console.error(e); process.exitCode = 1; });

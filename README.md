@@ -12,7 +12,7 @@ Connect this repository to the existing soundr.app site, not a new site.
 - Publish directory: `public` (also set in `netlify.toml`)
 - Enable automatic form detection in the Netlify Forms dashboard, then deploy.
 - Preserve the existing custom domains and DNS. This setup does not require changing beta.soundr.app.
-- The `public/_redirects` file preserves `/support` as a 200 rewrite to the page's support section.
+- The `public/_redirects` file preserves `/support` and `/support/` as 200 rewrites to the page's support section.
 
 ## Form activation
 
@@ -20,7 +20,7 @@ The launch configuration uses Netlify Forms on HTTPS soundr.app and www.soundr.a
 
 The `soundr-intake-mode` meta value in `public/index.html` is `netlify`. Set it to `preview` to disable browser submissions in a subsequent deployment.
 
-Before declaring intake live, verify that Netlify detects the `soundr-interest` form and retains actual authorized test submissions for each path: `artist-label`, `remixer`, and `producer-dj-waitlist` (the visible DJ waitlist). Check email, optional name, optional artist/label name, and hidden audience/path values. Check the spam folder as well as accepted submissions. A browser success message alone does not establish receipt. Monday lead forwarding is not connected by this repository.
+Before declaring intake live, verify that Netlify detects the `soundr-interest` form and retains actual authorized test submissions for each path: `artist`, `label`, `remixer`, and `producer-dj-waitlist` (the visible DJ waitlist). Email, first name and last name are required. Label name is validated on the Labels path only; role and artist/DJ name are optional. Check these fields, the combined hidden `name`, and hidden audience/path values. Check the spam folder as well as accepted submissions. A browser success message alone does not establish receipt. Monday lead forwarding is not connected by this repository.
 
 ## Changes
 
@@ -34,4 +34,6 @@ Run `python3 -m http.server 8080 --directory public --bind 127.0.0.1` and open h
 
 With an existing Playwright installation and its Chromium/WebKit browsers available, run `node tests/mobile-entry.cjs` and `node tests/intake.cjs`. Set `PLAYWRIGHT_MODULE` to the module path if it is not installed locally. Repeat with `BROWSER=webkit`. These checks intercept all network traffic, including mocked form submissions. Optional `EVIDENCE_DIR` captures form screenshots.
 
-Phone-width and coarse-pointer entry focuses the audience introduction, not an input. Text inputs use 16px on those surfaces; desktop retains 14px inputs and email focus. Zoom remains enabled. Headless checks cover focus, reading order, scroll reachability and reduced-height layouts, not the native iPhone keyboard, autofill toolbar or actual Safari focus zoom. Those require an on-device recheck.
+The supplied four-door design uses a native dialog with in-modal audience switching. The checks cover actual focus, keyboard containment, close/return focus, scroll cleanup, required fields, payloads, error/retry handling and reduced-height reachability. Zoom remains enabled. Headless checks do not establish native iPhone keyboard, autofill toolbar or actual Safari focus-zoom acceptance; those require an on-device recheck.
+
+The suites intentionally return a failing exit code when a required contract is not met. The supplied source currently reproduces a delayed-submission close/reopen race that can acknowledge an unsubmitted door, and non-email text inputs use 15px on touch layouts. These findings are not waived by passing ordinary submission and reachability checks. Preserve the supplied design pending the author's scoped repair decision and approval of the current PR head before merging; merging `main` publishes the website automatically.
