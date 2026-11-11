@@ -109,7 +109,7 @@
   .btn[disabled] { opacity: .6; cursor: default; transform: none; }
   .fine { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; color: var(--ink-faint); line-height: 1.5; text-align: center; min-height: 1em; }
   .fine.err { color: #ff8a6f; }
-  .done { display: flex; flex-direction: column; gap: 8px; padding-top: 8px; }
+  .done { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding-top: 8px; }
   .check { width: 44px; height: 44px; border-radius: 50%; background: var(--coral); color: #000; display: grid; place-items: center; margin-bottom: 6px; animation: pop .3s cubic-bezier(0.32, 0.04, 0.15, 1); }
   .check svg { width: 22px; height: 22px; }
   .done .big { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; }
@@ -125,7 +125,7 @@
   .mail { display: inline-flex; align-items: center; font-family: var(--mono); font-size: 14px; letter-spacing: 0.03em; color: var(--ink); border: 1px solid var(--coral-line); border-radius: 8px; padding: 13px 18px; background: #000; transition: background .15s, color .15s; }
   .mail:hover { background: var(--coral); color: #000; }
   .support .co { font-size: 0.9rem; color: var(--ink-faint); }
-  .foot { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px 24px; flex-wrap: wrap; padding: 20px var(--gr) 20px var(--gl); border-top: 1px solid var(--line-soft); }
+  .foot { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; text-align: center; gap: 10px 24px; flex-wrap: wrap; padding: 20px var(--gr) 20px var(--gl); border-top: 1px solid var(--line-soft); }
   .foot, .foot a { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); }
   .foot a:hover { color: var(--ink); }
   .foot .links { display: flex; gap: 22px; }
@@ -158,10 +158,7 @@
     <path d="M1260 180 C 1140 260, 1080 320, 1050 420" stroke="rgba(242,237,228,0.06)" stroke-width="1"/>
     <path d="M130 560 C 220 660, 320 720, 460 750" stroke="rgba(242,237,228,0.05)" stroke-width="1"/>
     <path d="M1330 600 C 1240 700, 1120 760, 980 780" stroke="rgba(242,237,228,0.05)" stroke-width="1"/>
-    <circle class="bg-node" cx="180" cy="140" r="4" fill="#ff5b3a" opacity="0.4"/>
-    <circle class="bg-node b2" cx="1260" cy="180" r="4" fill="#ff5b3a" opacity="0.4"/>
-    <circle class="bg-node b3" cx="130" cy="560" r="3" stroke="#ff5b3a" stroke-width="1" opacity="0.35"/>
-    <circle class="bg-node b4" cx="1330" cy="600" r="3" stroke="#ff5b3a" stroke-width="1" opacity="0.35"/>
+
     <circle class="bg-node b2" cx="520" cy="240" r="2.5" fill="rgba(242,237,228,0.3)"/>
     <circle class="bg-node b3" cx="1050" cy="420" r="2.5" fill="rgba(242,237,228,0.3)"/>
     <circle class="bg-node b4" cx="460" cy="750" r="2.5" fill="rgba(242,237,228,0.25)"/>
@@ -248,9 +245,6 @@
 </section>
 <footer class="foot">
   <span>&copy; 2026 Soundr, Inc.</span>
-  <div class="links">
-    <a href="mailto:support@soundr.app">Get in touch</a>
-  </div>
 </footer>
 
 <script>
